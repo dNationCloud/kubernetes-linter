@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubernetes-linter.fullname" . }}
+  labels:
+    {{- include "kubernetes-linter.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: 9102 #{{ .Values.service.port }}
+      targetPort: 9102 #{{ .Values.service.port }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "kubernetes-linter.selectorLabels" . | nindent 4 }}

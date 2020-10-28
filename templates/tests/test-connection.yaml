@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "kubernetes-linter.fullname" . }}-test-connection"
+  labels:
+    {{- include "kubernetes-linter.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: kubernetes-linter
+      command: ['wget']
+      args: ['{{ include "kubernetes-linter.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
