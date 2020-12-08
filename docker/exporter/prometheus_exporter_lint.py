@@ -25,6 +25,7 @@ class LintIntCollector:
             # TODO: for now only one label per item
             for item in data['Diagnostics']:
                 metric_name = item["Check"]
+                metric_label = {}
                 if "pod" in item["Kind"]:
                     metric_label = ("where", item["Object"]["ownerReferences"][0]["name"])
                 else:
@@ -37,12 +38,15 @@ class LintIntCollector:
                     items[metric_name][metric_label] = 1
             for key in items:
                 metric_name = key.replace("-", "_")
-                metric = GaugeMetricFamily(name=metric_name, documentation=metric_name, labels=["where"])
+                #TODO:For future labels will be list of possible labels
+                metric = GaugeMetricFamily(name='linter_result', documentation=metric_name, labels=["name", "where"])
                 for label in items[key]:
                     if not label:
-                        metric = GaugeMetricFamily(name=metric_name, documentation=metric_name, value=items[key][label])
+                        #TODO:when there is no labels we use only name of problem
+                        metric.add_metric([metric_name], value=items[key][label])
                     else:
-                        metric.add_metric([label[1]], value=items[key][label])
+                        #TODO:List of labels in same order as in create
+                        metric.add_metric([metric_name, label[1]], value=items[key][label])
                 yield metric
 
         except subprocess.CalledProcessError as e:
