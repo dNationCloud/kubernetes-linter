@@ -1,3 +1,14 @@
+# Copyright 2020 The dNation Kubernetes Linter Authors. All Rights Reserved.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#     http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import json
 import subprocess
 import os
@@ -6,56 +17,60 @@ import time
 
 from prometheus_client import start_http_server
 from prometheus_client.core import REGISTRY
-from prometheus_client.metrics_core import GaugeMetricFamily, CounterMetricFamily
+from prometheus_client.metrics_core import GaugeMetricFamily
 
 _HTTP_PORT = int(os.getenv("HTTP_PORT", "9102"))
 
 
-class LintIntCollector:
+class ClusterLintCollector:
     def __init__(self):
-        self._log = logging.getLogger("LintIntCollector")
+        self._log = logging.getLogger("ClusterLintCollector")
+
+    def metric_from_diagnostic(self, diag):
+        base_name = diag["Check"].replace("-", "_")
+        metric_name = f"clusterlint_{base_name}_total"
+        labels = {}
+
+        if "pod" in diag["Kind"]:
+            labels["where"] = diag["Object"]["ownerReferences"][0]["name"]
+
+        return metric_name, labels
 
     def collect(self):
-        # clusterlint --kubeconfig config run -o json
         try:
             raw = subprocess.check_output(["clusterlint", "run", "-o", "json"])
             data = json.loads(raw)
             items = {}
 
-            # TODO: for now only one label per item
-            for item in data['Diagnostics']:
-                metric_name = item["Check"]
-                metric_label = {}
-                if "pod" in item["Kind"]:
-                    metric_label = ("where", item["Object"]["ownerReferences"][0]["name"])
+            for diag in data['Diagnostics']:
+                metric_name, labels_dict = self.metric_from_diagnostic(diag)
+                if labels_dict:
+                    label_names, label_values = zip(*sorted(labels_dict.items()))
                 else:
-                    metric_label = None
+                    label_names, label_values = (), ()
                 if metric_name not in items:
                     items[metric_name] = {}
-                if metric_label in items[metric_name]:
-                    items[metric_name][metric_label] += 1
+                if label_names not in items[metric_name]:
+                    items[metric_name][label_names] = {}
+                if label_values not in items[metric_name][label_names]:
+                    items[metric_name][label_names][label_values] = 1
                 else:
-                    items[metric_name][metric_label] = 1
-            for key in items:
-                metric_name = key.replace("-", "_")
-                #TODO:For future labels will be list of possible labels
-                metric = GaugeMetricFamily(name='linter_result', documentation=metric_name, labels=["name", "where"])
-                for label in items[key]:
-                    if not label:
-                        #TODO:when there is no labels we use only name of problem
-                        metric.add_metric([metric_name], value=items[key][label])
-                    else:
-                        #TODO:List of labels in same order as in create
-                        metric.add_metric([metric_name, label[1]], value=items[key][label])
-                yield metric
+                    items[metric_name][label_names][label_values] += 1
+
+            for metric_name in items:
+                for label_names in items[metric_name]:
+                    metric_family = GaugeMetricFamily(name=metric_name, documentation=metric_name, labels=label_names)
+                    for label_values, value in items[metric_name][label_names].items():
+                        metric_family.add_metric(label_values, value)
+                    yield metric_family
 
         except subprocess.CalledProcessError as e:
-            print("error during run Linterint")
+            print("error during running ClusterLintCollector")
             print(e.output)
 
 
 if __name__ == "__main__":
     start_http_server(_HTTP_PORT)
-    REGISTRY.register(LintIntCollector())
+    REGISTRY.register(ClusterLintCollector())
     while True:
         time.sleep(1)

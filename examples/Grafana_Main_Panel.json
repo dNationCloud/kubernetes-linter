@@ -54,7 +54,7 @@
   "pluginVersion": "7.2.1",
   "targets": [
     {
-      "expr": "count(linter_result)",
+      "expr": "count({__name__=~\"clusterlint_.*_total\"})",
       "interval": "",
       "legendFormat": "",
       "refId": "A"
@@ -65,4 +65,3 @@
   "title": "Clusterlint result",
   "type": "stat"
 }
-

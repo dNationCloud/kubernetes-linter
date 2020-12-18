@@ -1,9 +1,9 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  namespace: default
-  name: linter-servicemonitor
+  name: {{ include "kubernetes-linter.fullname" . }}
   labels:
+    {{- include "kubernetes-linter.labels" . | nindent 4 }}
     release: dnation-kubernetes-monitoring-stack
 spec:
   endpoints:
@@ -21,8 +21,7 @@ spec:
   jobLabel: app.kubernetes.io/name
   namespaceSelector:
     matchNames:
-    - default
+    - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      app_kubernetes_io: kubernetes-linter
-
+      {{- include "kubernetes-linter.selectorLabels" . | nindent 6 }}

@@ -1,0 +1,5 @@
+dNation Kubernetes Linter has been installed.
+Check its status by running:
+    kubectl --namespace {{ .Release.Namespace }} get pods
+
+Visit https://www.dNation.cloud for detailed information.

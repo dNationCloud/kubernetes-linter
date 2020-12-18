@@ -20,20 +20,6 @@
   "links": [],
   "panels": [
     {
-      "collapsed": false,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 2,
-      "panels": [],
-      "title": "Row title",
-      "type": "row"
-    },
-    {
       "datasource": "$datasource",
       "fieldConfig": {
         "defaults": {
@@ -61,12 +47,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "name"
+              "options": "__name__"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Alert Name"
+                "value": "Check Name"
               }
             ]
           },
@@ -85,10 +71,10 @@
         ]
       },
       "gridPos": {
-        "h": 14,
-        "w": 18,
+        "h": 16,
+        "w": 24,
         "x": 0,
-        "y": 1
+        "y": 0
       },
       "id": 4,
       "options": {
@@ -103,7 +89,7 @@
       "pluginVersion": "7.2.1",
       "targets": [
         {
-          "expr": "linter_result",
+          "expr": "{__name__=~\"clusterlint_.*_total\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -120,7 +106,7 @@
           "options": {
             "include": {
               "names": [
-                "name",
+                "__name__",
                 "Value",
                 "where"
               ]
@@ -137,7 +123,7 @@
                 ],
                 "operation": "aggregate"
               },
-              "name": {
+              "__name__": {
                 "aggregations": [],
                 "operation": "groupby"
               }
@@ -161,7 +147,7 @@
         },
         "hide": 0,
         "includeAll": false,
-        "label": "Daatasource",
+        "label": "Datasource",
         "multi": false,
         "name": "datasource",
         "options": [],
@@ -180,8 +166,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "ClusterLint Result",
+  "title": "Kubernetes Linter",
   "uid": "fWsvTmJMk",
-  "version": 12
+  "version": 30
 }
-
