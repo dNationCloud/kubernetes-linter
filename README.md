@@ -3,6 +3,8 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/dnationcloud)](https://artifacthub.io/packages/search?repo=dnationcloud)
 
+![dNation Kubernetes Linter GUI](https://cdn.ifne.eu/public/icons/dnation_kubernetes_linter_screenshot.png "dNation Kubernetes Linter GUI")
+
 dNation Kubernetes Linter is a software stack for analysis of live Kubernetes clusters.
 
 It consists of:

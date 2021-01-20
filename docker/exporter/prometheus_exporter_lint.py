@@ -31,8 +31,17 @@ class ClusterLintCollector:
         metric_name = f"clusterlint_{base_name}_total"
         labels = {}
 
-        if "pod" in diag["Kind"]:
-            labels["where"] = diag["Object"]["ownerReferences"][0]["name"]
+        tmp = diag["Check"].replace("-", " ")
+        labels["check_name"] = tmp[0].upper() + tmp[1:]
+        labels["kind"] = diag["Kind"]
+        labels["object_name"] = diag["Object"]["name"]
+        if "namespace" in diag["Object"]:
+            labels["namespace"] = diag["Object"]["namespace"]
+        labels["message"] = diag["Message"]
+        if diag["Severity"] == "error":
+            labels["severity"] = "2"
+        if diag["Severity"] == "warning":
+            labels["severity"] = "1"
 
         return metric_name, labels
 

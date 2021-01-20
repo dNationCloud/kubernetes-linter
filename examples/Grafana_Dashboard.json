@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 45,
-  "iteration": 1607430259004,
+  "iteration": 1611146658530,
   "links": [],
   "panels": [
     {
@@ -25,7 +25,7 @@
         "defaults": {
           "custom": {
             "align": null,
-            "displayMode": "color-background",
+            "displayMode": "auto",
             "filterable": false
           },
           "mappings": [],
@@ -35,10 +35,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 10
               }
             ]
           }
@@ -47,7 +43,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "__name__"
+              "options": "check_name"
             },
             "properties": [
               {
@@ -67,11 +63,72 @@
                 "value": "Count"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "severity"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Severity"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 1
+                    },
+                    {
+                      "color": "red",
+                      "value": 2
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "",
+                    "id": 1,
+                    "text": "ERROR",
+                    "to": "",
+                    "type": 1,
+                    "value": "2"
+                  },
+                  {
+                    "from": "",
+                    "id": 2,
+                    "text": "WARNING",
+                    "to": "",
+                    "type": 1,
+                    "value": "1"
+                  }
+                ]
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
           }
         ]
       },
       "gridPos": {
-        "h": 16,
+        "h": 10,
         "w": 24,
         "x": 0,
         "y": 0
@@ -82,11 +139,11 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "Count"
+            "displayName": "Severity"
           }
         ]
       },
-      "pluginVersion": "7.2.1",
+      "pluginVersion": "7.3.5",
       "targets": [
         {
           "expr": "{__name__=~\"clusterlint_.*_total\"}",
@@ -99,7 +156,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Kubernetes Linter",
+      "title": "Overall",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -107,8 +164,9 @@
             "include": {
               "names": [
                 "__name__",
+                "check_name",
                 "Value",
-                "where"
+                "severity"
               ]
             }
           }
@@ -125,6 +183,14 @@
               },
               "__name__": {
                 "aggregations": [],
+                "operation": null
+              },
+              "check_name": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "severity": {
+                "aggregations": [],
                 "operation": "groupby"
               }
             }
@@ -132,8 +198,242 @@
         }
       ],
       "type": "table"
+    },
+    {
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "mappings": [
+            {
+              "from": "",
+              "id": 1,
+              "text": "",
+              "to": "",
+              "type": 1,
+              "value": ""
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(31, 31, 31)",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "check_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Check Name"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Count"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "namespace"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Namespace"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "message"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Message"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "kind"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Kind"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "object_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Object Name"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "severity"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 1
+                    },
+                    {
+                      "color": "red",
+                      "value": 2
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "",
+                    "id": 1,
+                    "text": "ERROR",
+                    "to": "",
+                    "type": 1,
+                    "value": "2"
+                  },
+                  {
+                    "from": "",
+                    "id": 2,
+                    "text": "WARNING",
+                    "to": "",
+                    "type": 1,
+                    "value": "1"
+                  }
+                ]
+              },
+              {
+                "id": "displayName",
+                "value": "Severity"
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 6,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Check Name"
+          }
+        ]
+      },
+      "pluginVersion": "7.3.5",
+      "targets": [
+        {
+          "expr": "{__name__=~\"clusterlint_.*_total\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Details",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "check_name",
+                "kind",
+                "message",
+                "namespace",
+                "object_name",
+                "severity",
+                "Value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "Value": 7,
+              "__name__": 0,
+              "check_name": 1,
+              "kind": 4,
+              "message": 5,
+              "namespace": 3,
+              "object_name": 2,
+              "severity": 6
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
+  "refresh": "1m",
   "schemaVersion": 26,
   "style": "dark",
   "tags": [],
@@ -145,6 +445,7 @@
           "text": "k8s-h-dev-metrics",
           "value": "k8s-h-dev-metrics"
         },
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Datasource",

@@ -10,13 +10,8 @@ spec:
     - interval: 30s
       path: /metrics
       relabelings:
-      - action: replace
-        regex: ^(.*)$
-        replacement: $1
-        separator: ;
-        sourceLabels:
-        - __meta_kubernetes_pod_container_name
-        targetLabel: container
+      - action: labelDrop
+        regex: pod|container|service|namespace|job|endpoint|node
       targetPort: 9102
   jobLabel: app.kubernetes.io/name
   namespaceSelector:
