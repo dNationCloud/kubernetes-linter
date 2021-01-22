@@ -1,0 +1,80 @@
+name: Lint and Test Chart
+
+on:
+  pull_request:
+    # Only if there are chart changes to test.
+    paths:
+    - 'chart/**'
+
+jobs:
+  lint-chart:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Fetch history
+      run: git fetch --prune --unshallow
+
+    - name: Run chart-testing (lint)
+      uses: helm/chart-testing-action@v1.0.0
+      with:
+        command: lint
+        config: .github/ct.yaml
+
+  build-image-install-chart:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        k8s:
+          - v1.17.11
+          - v1.19.1
+    needs:
+      - lint-chart
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Build image
+      id: docker_build
+      uses: docker/build-push-action@v2
+      with:
+        context: ./
+        file: ./docker/Dockerfile
+        builder: ${{ steps.buildx.outputs.name }}
+        push: false
+        load: true
+        tags: dnationcloud/kubernetes-linter:test
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache
+
+    - name: Fetch history
+      run: git fetch --prune --unshallow
+
+    - name: Create kind ${{ matrix.k8s }} cluster
+      uses: helm/kind-action@v1.0.0
+      with:
+        node_image: kindest/node:${{ matrix.k8s }}
+
+    - name: Load image
+      run: |
+        cluster_name=$(kind get clusters | head -1)
+        kind load docker-image dnationcloud/kubernetes-linter:test --name $cluster_name
+
+    - name: Run chart-testing (install)
+      uses: helm/chart-testing-action@v1.0.0
+      with:
+        command: install
+        config: .github/ct.yaml
