@@ -46,4 +46,9 @@ If you want to contribute, please read following:
 1. [Contribution Guidelines](CONTRIBUTING.md)
 1. [Code of Conduct](CODE_OF_CONDUCT.md)
 
-We use GitHub issues to manage requests and bugs, please visit our discussion forum if you have any questions.
+We use GitHub issues to manage requests and bugs.
+
+# Commercial support
+This project has been developed, maintained and used in production by professionals to simplify their day-to-day monitoring tasks and reduce incident reaction time.
+
+Commercial support is available, including 24/7, please [contact us](mailto:cloud@dNation.cloud?subject=Request%20for%20commercial%20support%20of%20dNation%20Kubernetes%20Linter).
