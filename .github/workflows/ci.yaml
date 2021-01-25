@@ -5,6 +5,7 @@ on:
     # Only if there are chart changes to test.
     paths:
     - 'chart/**'
+  workflow_dispatch:
 
 jobs:
   lint-chart:
