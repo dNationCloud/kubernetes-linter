@@ -7,6 +7,7 @@ on:
     # Only if there are changes to release.
     paths:
     - 'docker/**'
+  workflow_dispatch:
 
 jobs:
   tag:
