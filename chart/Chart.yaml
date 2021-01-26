@@ -1,8 +1,8 @@
 apiVersion: v2
 name: dnation-kubernetes-linter
 type: application
-version: 0.1.0
-appVersion: 0.2.0
+version: 0.1.1
+appVersion: 0.2.1
 description: A software stack for analysis of live Kubernetes clusters.
 keywords:
 - dnation
