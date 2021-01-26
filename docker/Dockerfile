@@ -1,5 +1,9 @@
 FROM golang
 
+LABEL Version="0.2.1"
+LABEL Vendor="dNation"
+LABEL Description="Prometheus exporter for ClusterLint"
+
 WORKDIR /opt/clusterlint
 
 RUN apt-get update && apt-get install -y \

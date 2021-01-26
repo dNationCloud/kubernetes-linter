@@ -1,0 +1,8 @@
+# Values for chart-testing in github CI/CD pipeline.
+# https://github.com/helm/chart-testing/blob/master/doc/ct_install.md
+# This is a YAML-formatted file.
+# Declare variables to be passed into templates.
+
+image:
+  pullPolicy: Never
+  tag: "test"
